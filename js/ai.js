@@ -1,5 +1,6 @@
-function AI(grid) {
+function AI(grid, depth) {
   this.grid = grid;
+  this.depth = depth;
 }
 
 // static evaluation function
@@ -208,7 +209,6 @@ AI.prototype.getBest = function() {
 
 // performs iterative deepening over the alpha-beta search
 AI.prototype.iterativeDeep = function() {
-  var start = (new Date()).getTime();
   var depth = 0;
   var best;
   do {
@@ -220,7 +220,7 @@ AI.prototype.iterativeDeep = function() {
       best = newBest;
     }
     depth++;
-  } while ( (new Date()).getTime() - start < minSearchTime);
+  } while (depth < this.depth);
   //console.log('depth', --depth);
   //console.log(this.translate(best.move));
   //console.log(best);

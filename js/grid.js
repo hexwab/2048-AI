@@ -234,8 +234,9 @@ Grid.prototype.move = function (direction) {
   return {moved: moved, score: score, won: won};
 };
 
-Grid.prototype.computerMove = function() {
-  this.addRandomTile();
+Grid.prototype.computerMove = function(pos, value) {
+  this.prepareTiles();
+  this.insertTile(new Tile(pos, value));
   this.playerTurn = true;
 }
 

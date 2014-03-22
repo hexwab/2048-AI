@@ -23,68 +23,29 @@ KeyboardInputManager.prototype.emit = function (event, data) {
 KeyboardInputManager.prototype.listen = function () {
   var self = this;
 
-  var map = {
-    38: 0, // Up
-    39: 1, // Right
-    40: 2, // Down
-    37: 3, // Left
-    75: 0, // vim keybindings
-    76: 1,
-    74: 2,
-    72: 3
-  };
-
-  document.addEventListener("keydown", function (event) {
-    var modifiers = event.altKey || event.ctrlKey || event.metaKey ||
-                    event.shiftKey;
-    var mapped    = map[event.which];
-
-    if (!modifiers) {
-      if (mapped !== undefined) {
-        event.preventDefault();
-        var feedbackContainer  = document.getElementById('feedback-container');
-        feedbackContainer.innerHTML = ' ';
-        self.emit("move", mapped);
-      }
-
-      if (event.which === 32) self.restart.bind(self)(event);
-    }
-  });
-
   var retry = document.getElementsByClassName("retry-button")[0];
   retry.addEventListener("click", this.restart.bind(this));
 
-  var hintButton = document.getElementById('hint-button');
-  hintButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    var feedbackContainer  = document.getElementById('feedback-container');
-    feedbackContainer.innerHTML = '<img src=img/spinner.gif />';
-    self.emit('think');
-  });
+  //var setdifficulty = function(e) {
+  //	self.emit("difficulty", parseInt(difficulty.value,10));
+  //}
+  //  var difficulty = document.getElementById("difficulty");
+  //  difficulty.addEventListener("change", setdifficulty);
 
-  var runButton = document.getElementById('run-button');
-  runButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    self.emit('run')
-  })
+    var cells = document.getElementsByClassName("grid-cell");
+    for (var n=0; n<16; n++) {
+	var f=function(n, v) {
+	    return function(e) {
+		var x=n%4, y=(n/4)|0;
+		self.emit("move", {x:x, y:y, value: v});
+		e.preventDefault();
+		return false;
+	    };
+	};
 
-
-  // Listen to swipe events
-  var gestures = [Hammer.DIRECTION_UP, Hammer.DIRECTION_RIGHT,
-                  Hammer.DIRECTION_DOWN, Hammer.DIRECTION_LEFT];
-
-  var gameContainer = document.getElementsByClassName("game-container")[0];
-  var handler       = Hammer(gameContainer, {
-    drag_block_horizontal: true,
-    drag_block_vertical: true
-  });
-  
-  handler.on("swipe", function (event) {
-    event.gesture.preventDefault();
-    mapped = gestures.indexOf(event.gesture.direction);
-
-    if (mapped !== -1) self.emit("move", mapped);
-  });
+	cells[n].addEventListener("click", f(n,2), true);
+	cells[n].addEventListener("contextmenu", f(n,4), true);
+    }
 };
 
 KeyboardInputManager.prototype.restart = function (event) {
