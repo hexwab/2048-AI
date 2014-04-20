@@ -32,6 +32,12 @@ KeyboardInputManager.prototype.listen = function () {
   //  var difficulty = document.getElementById("difficulty");
   //  difficulty.addEventListener("change", setdifficulty);
 
+    /* prevent stray menus popping up */
+    document.getElementsByClassName("game-container")[0]
+	.addEventListener("contextmenu", function(e) {
+	    e.preventDefault(); return false;
+	}, true);
+
     var cells = document.getElementsByClassName("grid-cell");
     for (var n=0; n<16; n++) {
 	var f=function(n, v) {
